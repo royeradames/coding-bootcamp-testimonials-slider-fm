@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+:root {
+  --navy: #202047;
+  --gray-400: #b9b9ce;
+  --role: hsl(240 18% 50%);
+  --arrow: #8585ac;
+  --mist: #f4f4fc;
+  --violet: #4a3fdb;
+  --photo-shadow: 0 2.5rem 3.125rem -1.875rem rgb(36 36 113 / .5);
+  --pill-shadow: 0 .9375rem 1.25rem -.625rem rgb(36 36 113 / .1);
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+/* The supplied curve sits in the bottom-left corner of every frame: 285×72 on mobile and tablet, 610×154 on desktop. */
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: white url("/images/pattern-curve.svg") left bottom / 17.8125rem 4.5rem no-repeat;
+  color: var(--navy);
+  font-family: var(--font-inter), sans-serif;
+}
+a { color: inherit; text-underline-offset: .2em; }
+:focus-visible { outline: 3px solid var(--violet); outline-offset: 3px; }
+
+main { display: grid; align-items: center; padding: 1.5rem 0 3rem; }
+
+/* Mobile first: the 375 frame stacks a 327px stage above a centred quote. */
+.slider {
+  display: grid;
+  grid-template-areas: "stage" "quotes";
+  justify-items: center;
+  row-gap: 2rem;
+  width: 100%;
+  touch-action: pan-y;
+}
+.stage {
+  grid-area: stage;
+  position: relative;
+  width: min(calc(100% - 3rem), 32.5rem);
+  aspect-ratio: 697 / 657;
+  background: url("/images/pattern-bg.svg") center / 100% 100% no-repeat;
+}
+/* Photo geometry is the Figma Bitmap inside the 697×657 Image Container, as percentages so it scales with the stage. */
+.photo-frame {
+  position: absolute;
+  left: 9.3257%;
+  top: 9.589%;
+  width: 77.4749%;
+  aspect-ratio: 1;
+  display: grid;
+  border-radius: 5px;
+  box-shadow: var(--photo-shadow);
+  overflow: hidden;
+}
+.photo { grid-area: 1 / 1; display: block; width: 100%; height: 100%; object-fit: cover; }
+.photo[data-active="false"] { opacity: 0; }
+
+.controls {
+  --pill-height: 2.75rem;
+  position: absolute;
+  top: calc(91.78% - var(--pill-height) / 2);
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  border-radius: 999px;
+  background: white;
+  box-shadow: var(--pill-shadow);
+}
+.controls button {
+  display: grid;
+  place-items: center;
+  width: var(--pill-height);
+  height: var(--pill-height);
+  border: 0;
+  border-radius: 999px;
+  padding: 0;
+  background: transparent;
+  color: var(--arrow);
+  cursor: pointer;
+}
+.controls svg { width: .5rem; height: auto; }
+.controls button:hover, .controls button:focus-visible { color: var(--navy); }
+.controls button:focus-visible { outline-offset: -3px; }
+
+.quotes {
+  grid-area: quotes;
+  display: grid;
+  width: min(calc(100% - 4rem), 39.6875rem);
+  padding-top: 1.5625rem;
+  background: url("/images/pattern-quotes.svg") center top / 3.75rem 3.125rem no-repeat;
+  text-align: center;
+}
+.slide { grid-area: 1 / 1; margin: 0; }
+.slide[data-active="false"] { visibility: hidden; opacity: 0; }
+blockquote { margin: 0; }
+blockquote p { margin: 0; font-size: 1.125rem; font-weight: 300; line-height: 1.5rem; }
+figcaption { display: flex; flex-direction: column; margin-top: 1rem; font-size: 1rem; line-height: 1.25rem; }
+.name { font-weight: 700; }
+.role { color: var(--role); font-weight: 500; }
+
+footer { position: relative; padding: 0 1.5rem 1.5rem; color: var(--navy); font-size: 1rem; line-height: 1.5; text-align: center; text-wrap: balance; }
+footer .footer-part { white-space: nowrap; }
+footer a { display: inline-block; min-height: 2.75rem; padding-block: .625rem; }
+footer a:hover { color: var(--violet); }
+
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* Tablet 768 frame: a 520px stage, a 64px gap and the desktop 32px quote, centred. */
+@media (min-width: 48rem) {
+  main { padding-block: 1.5rem 5rem; }
+  .slider { row-gap: 4rem; }
+  .controls { --pill-height: 3.5rem; }
+  .controls svg { width: .5625rem; }
+  .quotes { padding-top: 4.625rem; background-size: 7.5rem 6.25rem; }
+  blockquote p { font-size: 2rem; line-height: 1.375; }
+  figcaption { flex-direction: row; justify-content: center; flex-wrap: wrap; column-gap: .5rem; margin-top: 2rem; font-size: 1.25rem; line-height: 1.9; }
+}
+
+/* Desktop 1440 frame: quote column 165→800 overlapping the 697px stage at 670→1367. Columns keep those proportions. */
+@media (min-width: 64rem) {
+  body { background-size: 38.125rem 9.625rem; }
+  main { padding-block: 3.125rem 5.8125rem; }
+  .slider {
+    grid-template-areas: none;
+    grid-template-columns: 165fr 505fr 130fr 567fr 73fr;
+    align-items: center;
+    justify-items: stretch;
+    max-width: 90rem;
+    margin-inline: auto;
+  }
+  .stage { grid-column: 3 / 5; grid-row: 1; width: 100%; }
+  .quotes {
+    grid-column: 2 / 4;
+    grid-row: 1;
+    z-index: 1;
+    width: 100%;
+    margin-top: 1rem;
+    background-position: 6rem 0;
+    text-align: left;
+  }
+  .controls { left: 18.221%; translate: none; }
+  blockquote p { font-size: clamp(1.75rem, 1.1rem + 1vw, 2rem); }
+  figcaption { justify-content: flex-start; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .slide { transition: opacity .4s ease, translate .4s ease, visibility .4s; }
+  .slide[data-active="false"] { translate: 0 .75rem; }
+  .photo { transition: opacity .4s ease; }
+  .controls button { transition: color .15s; }
+}
