@@ -170,3 +170,22 @@ test("renders the first testimonial without JavaScript", async ({ browser }) => 
   await expect(page.getByRole("img", { name: /Tanya Sinclair/ })).toBeVisible();
   await context.close();
 });
+
+/* QA sweep October 8 (STS1, LA4): from 1030 px the quote column ran on top of the photo, so lines of the quote sat over the portrait. */
+test("on desktop the quote text never runs over the photo, for either slide", async ({ page }) => {
+  for (const width of [1024, 1030, 1100, 1200, 1280, 1440, 1600, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    for (let slide = 0; slide < 2; slide++) {
+      if (slide) await page.getByRole("button", { name: "Next testimonial" }).click();
+      const overlap = await page.evaluate(() => {
+        const photo = document.querySelector(".photo-frame")!.getBoundingClientRect();
+        const active = document.querySelector('.slide[data-active="true"]')!;
+        const range = document.createRange();
+        range.selectNodeContents(active);
+        return Math.max(0, ...[...range.getClientRects()].map(line => Math.min(line.right, photo.right) - Math.max(line.left, photo.left)));
+      });
+      expect(overlap, `quote over photo at ${width}, slide ${slide + 1}`).toBeLessThanOrEqual(0);
+    }
+  }
+});
