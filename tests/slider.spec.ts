@@ -135,7 +135,8 @@ test("follows the Figma arrangement at mobile, tablet and desktop", async ({ pag
   expect(Math.round(stage.x)).toBe(670);
   expect(Math.round(stage.width)).toBe(697);
   expect(Math.round(quotes.x)).toBe(165);
-  expect(Math.round(quotes.width)).toBe(635);
+  expect(Math.round(quotes.width)).toBe(570);
+  expect(Math.round(quotes.x + quotes.width)).toBe(Math.round(photo.x));
   expect(Math.round(photo.width)).toBe(540);
   expect(Math.round(controls.x)).toBe(797);
   expect(Math.abs(controls.y + controls.height / 2 - (photo.y + photo.height))).toBeLessThan(2);
@@ -169,4 +170,28 @@ test("renders the first testimonial without JavaScript", async ({ browser }) => 
   await expect(page.getByText(tanya.quote)).toBeVisible();
   await expect(page.getByRole("img", { name: /Tanya Sinclair/ })).toBeVisible();
   await context.close();
+});
+
+/* QA sweep October 8 (STS1, LA4): from 1030 px the quote column ran on top of the photo, so lines of the quote sat over the portrait. */
+test("on desktop the quote text never runs over the photo, for either slide", async ({ page }) => {
+  for (const width of [1024, 1030, 1100, 1200, 1280, 1440, 1600, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    for (let slide = 0; slide < 2; slide++) {
+      if (slide) await page.getByRole("button", { name: "Next testimonial" }).click();
+      const overlap = await page.evaluate(() => {
+        const photo = document.querySelector(".photo-frame")!.getBoundingClientRect();
+        const active = document.querySelector('.slide[data-active="true"]')!;
+        const walker = document.createTreeWalker(active, NodeFilter.SHOW_TEXT);
+        const lines: DOMRect[] = [];
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          lines.push(...range.getClientRects());
+        }
+        return Math.max(0, ...lines.map(line => Math.min(line.right, photo.right) - Math.max(line.left, photo.left)));
+      });
+      expect(overlap, `quote over photo at ${width}, slide ${slide + 1}`).toBeLessThanOrEqual(0);
+    }
+  }
 });

@@ -21,5 +21,6 @@ Original challenge files are preserved under `reference/`; supplied images moved
 - Both slides share one grid cell, so the layout doesn't jump between the shorter and longer quote.
 - The design's 15px mobile name and role are raised to the 16px family floor. The mobile arrow pill grows from 80×40 to 88×44 so each button meets the 44px target floor.
 - The design's role colour, Gray 400 `#b9b9ce`, is about 1.9:1 on white. It's darkened to `hsl(240 18% 50%)` (about 5:1) so the job titles pass WCAG AA. The arrows keep the supplied `#8585ac` and darken to navy on hover and focus.
+- On desktop the Figma quote column (165→800 at 1440) runs over the photo, which put quote lines on the portrait at narrower desktop widths. The column now ends where the photo starts (165→735, with 24px of padding), so the quote wraps one line more at 1440 but never sits on the image (width sweep, October 8, 2026).
 - Without JavaScript, the first testimonial renders in full.
 - One site name, "Coding bootcamp testimonials slider", appears in the footer, `og:site_name` and `WebSite` JSON-LD. The canonical URL is the planned `coding-bootcamp-testimonials-slider-fm.royeradames.com` production domain, which isn't attached yet.
