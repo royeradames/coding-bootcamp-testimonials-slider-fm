@@ -182,9 +182,14 @@ test("on desktop the quote text never runs over the photo, for either slide", as
       const overlap = await page.evaluate(() => {
         const photo = document.querySelector(".photo-frame")!.getBoundingClientRect();
         const active = document.querySelector('.slide[data-active="true"]')!;
-        const range = document.createRange();
-        range.selectNodeContents(active);
-        return Math.max(0, ...[...range.getClientRects()].map(line => Math.min(line.right, photo.right) - Math.max(line.left, photo.left)));
+        const walker = document.createTreeWalker(active, NodeFilter.SHOW_TEXT);
+        const lines: DOMRect[] = [];
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          lines.push(...range.getClientRects());
+        }
+        return Math.max(0, ...lines.map(line => Math.min(line.right, photo.right) - Math.max(line.left, photo.left)));
       });
       expect(overlap, `quote over photo at ${width}, slide ${slide + 1}`).toBeLessThanOrEqual(0);
     }
