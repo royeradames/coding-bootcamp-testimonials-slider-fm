@@ -135,7 +135,8 @@ test("follows the Figma arrangement at mobile, tablet and desktop", async ({ pag
   expect(Math.round(stage.x)).toBe(670);
   expect(Math.round(stage.width)).toBe(697);
   expect(Math.round(quotes.x)).toBe(165);
-  expect(Math.round(quotes.width)).toBe(635);
+  expect(Math.round(quotes.width)).toBe(570);
+  expect(Math.round(quotes.x + quotes.width)).toBe(Math.round(photo.x));
   expect(Math.round(photo.width)).toBe(540);
   expect(Math.round(controls.x)).toBe(797);
   expect(Math.abs(controls.y + controls.height / 2 - (photo.y + photo.height))).toBeLessThan(2);

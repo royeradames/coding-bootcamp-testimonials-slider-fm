@@ -119,24 +119,26 @@ footer a:hover { color: var(--violet); }
   figcaption { flex-direction: row; justify-content: center; flex-wrap: wrap; column-gap: .5rem; margin-top: 2rem; font-size: 1.25rem; line-height: 1.9; }
 }
 
-/* Desktop 1440 frame: quote column 165→800 overlapping the 697px stage at 670→1367. Columns keep those proportions. */
+/* Desktop 1440 frame: the 697px stage at 670→1367 with the photo from 735. The Figma quote ran on to 800, over the photo;
+   it now ends where the photo starts (165→735) so no line of the quote sits on the portrait. Columns keep those proportions. */
 @media (min-width: 64rem) {
   body { background-size: 38.125rem 9.625rem; }
   main { padding-block: 3.125rem 5.8125rem; }
   .slider {
     grid-template-areas: none;
-    grid-template-columns: 165fr 505fr 130fr 567fr 73fr;
+    grid-template-columns: 165fr 505fr 65fr 65fr 567fr 73fr;
     align-items: center;
     justify-items: stretch;
     max-width: 90rem;
     margin-inline: auto;
   }
-  .stage { grid-column: 3 / 5; grid-row: 1; width: 100%; }
+  .stage { grid-column: 3 / 6; grid-row: 1; width: 100%; }
   .quotes {
     grid-column: 2 / 4;
     grid-row: 1;
     z-index: 1;
     width: 100%;
+    padding-right: 1.5rem;
     margin-top: 1rem;
     background-position: 6rem 0;
     text-align: left;
