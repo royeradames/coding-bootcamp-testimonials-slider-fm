@@ -21,7 +21,7 @@ export function TestimonialSlider({ testimonials }: { testimonials: Testimonial[
   const swipeStart = useRef<number | null>(null);
   const count = testimonials.length;
   // Only the first photo is part of the first paint. The hidden ones start loading once the page has loaded (or when
-  // one becomes active), so they don't compete with it; they're ready long before anyone reaches the next slide.
+  // anyone changes slides), so they don't compete with it; they're ready long before anyone reaches the next slide.
   const [loadHidden, setLoadHidden] = useState(false);
   useEffect(() => {
     const start = () => setLoadHidden(true);
@@ -36,6 +36,7 @@ export function TestimonialSlider({ testimonials }: { testimonials: Testimonial[
   const show = (index: number) => {
     const next = (index + count) % count;
     const testimonial = testimonials[next];
+    setLoadHidden(true);
     setActive(next);
     setAnnouncement(`Testimonial ${next + 1} of ${count}: ${testimonial.name}, ${testimonial.role}`);
   };
