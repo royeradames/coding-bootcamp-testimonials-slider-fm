@@ -24,8 +24,9 @@ test("renders landmarks, the first testimonial and the supplied portraits", asyn
   // The hidden slide is out of the accessibility tree and not focusable.
   await expect(page.getByText(john.quote)).toBeHidden();
   await expect(page.getByRole("img")).toHaveCount(1);
+  // The hidden photo starts loading after the page's load event, so wait for each one to finish.
   for (const image of await page.locator(".photo").all()) {
-    expect(await image.evaluate(element => element instanceof HTMLImageElement && element.complete && element.naturalWidth === 540)).toBe(true);
+    await expect.poll(() => image.evaluate(element => element instanceof HTMLImageElement && element.complete && element.naturalWidth === 540)).toBe(true);
   }
 });
 
