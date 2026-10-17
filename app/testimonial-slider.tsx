@@ -2,7 +2,7 @@
 
 /* Native images keep the supplied 540px portraits at their intrinsic size and avoid an image optimizer for two files. */
 /* eslint-disable @next/next/no-img-element */
-import { useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import type { Testimonial } from "./testimonials";
 
 const SWIPE_DISTANCE = 40;
@@ -20,6 +20,18 @@ export function TestimonialSlider({ testimonials }: { testimonials: Testimonial[
   const [announcement, setAnnouncement] = useState("");
   const swipeStart = useRef<number | null>(null);
   const count = testimonials.length;
+  // Only the first photo is part of the first paint. The hidden ones start loading once the page has loaded (or when
+  // one becomes active), so they don't compete with it; they're ready long before anyone reaches the next slide.
+  const [loadHidden, setLoadHidden] = useState(false);
+  useEffect(() => {
+    const start = () => setLoadHidden(true);
+    if (document.readyState === "complete") {
+      const id = window.setTimeout(start, 0);
+      return () => window.clearTimeout(id);
+    }
+    window.addEventListener("load", start, { once: true });
+    return () => window.removeEventListener("load", start);
+  }, []);
 
   const show = (index: number) => {
     const next = (index + count) % count;
@@ -79,7 +91,7 @@ export function TestimonialSlider({ testimonials }: { testimonials: Testimonial[
             <img
               key={testimonial.id}
               className="photo"
-              src={testimonial.photo}
+              src={index === 0 || index === active || loadHidden ? testimonial.photo : undefined}
               width="540"
               height="540"
               alt={index === active ? testimonial.alt : ""}
