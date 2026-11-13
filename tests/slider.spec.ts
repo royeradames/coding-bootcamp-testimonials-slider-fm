@@ -100,7 +100,7 @@ test("respects prefers-reduced-motion", async ({ browser }) => {
   for (const reducedMotion of ["reduce", "no-preference"] as const) {
     const context = await browser.newContext({ reducedMotion });
     const page = await context.newPage();
-    await page.goto("http://127.0.0.1:4571/");
+    await page.goto("http://127.0.0.1:4595/");
     const durations = await page.locator(".slide, .photo").evaluateAll(elements => elements.map(element => getComputedStyle(element).transitionDuration));
     if (reducedMotion === "reduce") expect(durations.every(duration => duration.split(",").every(value => parseFloat(value) === 0))).toBe(true);
     else expect(durations.every(duration => parseFloat(duration) > 0)).toBe(true);
@@ -165,7 +165,7 @@ test("fits 400 to 1440 and enlarged text with no overflow or text under 16px", a
 test("renders the first testimonial without JavaScript", async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
-  await page.goto("http://127.0.0.1:4571/");
+  await page.goto("http://127.0.0.1:4595/");
   await expect(page.getByText(tanya.quote)).toBeVisible();
   await expect(page.getByRole("img", { name: /Tanya Sinclair/ })).toBeVisible();
   await context.close();
